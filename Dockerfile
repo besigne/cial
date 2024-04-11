@@ -10,3 +10,5 @@ RUN \
     fi
 
 COPY . .
+
+ENTRYPOINT ["python", "-u", "-m", "module"]

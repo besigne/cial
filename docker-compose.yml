@@ -1,5 +1,0 @@
-name: module
-
-services:
-  module:
-    build: ./
