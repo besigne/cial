@@ -1,11 +1,23 @@
 import sys
-import re
-import threading
 from Scrapper import Scrapper
 
-for line in sys.stdin:
-    Scrapper(url=line.strip())
+lines = [
+    # "https://www.cmsenergy.com/contact-us/default.aspx",
+    # "https://www.illion.com.au",
+    # "https://www.phosagro.com/contacts",
+    # "https://www.powerlinx.com/contact",
+    "https://www.cialdnb.com/en,",
+    # "https://www.illion.com.au/contact-us/"
+]
 
-# scrapper = Scrapper(url="https://www.cmsenergy.com/contact-us/default.aspx")
+threads = []
 
-# scrapper.find_logos()
+# for line in sys.stdin:
+#     thread = Scrapper(url=line.strip())
+#     thread.start()
+#     threads.append(thread)
+
+for line in lines:
+    thread = Scrapper(url=line.strip())
+    thread.start()
+    threads.append(thread)
