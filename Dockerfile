@@ -1,6 +1,8 @@
 FROM python:3.12.2
 LABEL authors="besigne"
 
+ENV CONTAINER_NAME moudle
+
 WORKDIR /module
 COPY . /module
 
