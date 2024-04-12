@@ -1,8 +1,9 @@
 import json
 import threading
 import requests
-from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+from logger import LoggerHandler
 from scrapper.handlers import LogoHandler, PhoneHandler
 from requests.exceptions import RequestException
 
@@ -14,10 +15,11 @@ class Scrapper(threading.Thread):
                       'Chrome/58.0.3029.110 Safari/537.3'
     }
 
-    def __init__(self, url: str) -> None:
-        super().__init__()
+    def __init__(self, url: str, log_handler: LoggerHandler) -> None:
+        super(Scrapper, self).__init__()
         self.url = url
         self.base_url = '{uri.scheme}://{uri.netloc}'.format(uri=urlparse(url))
+        self.log_handler = log_handler
 
     def run(self) -> None:
         try:
@@ -31,13 +33,16 @@ class Scrapper(threading.Thread):
                 logo_handler = LogoHandler(soup, self.url, self.base_url)
                 phone_handler = PhoneHandler(soup)
                 self.__output(logo=logo_handler.run(), phones=phone_handler.run())
+                self.log_handler.log(self.base_url, page.status_code,
+                                     logo_handler.found_logo, phone_handler.phones_count)
             else:
+                self.log_handler.fail(self.base_url, page.status_code)
                 print("Dead page")
 
         except RequestException:
             raise RequestException
 
-    def __output(self, logo: str, phones: list):
+    def __output(self, logo: str, phones: list) -> json:
         result = {
             "logo": logo,
             "phones": phones,

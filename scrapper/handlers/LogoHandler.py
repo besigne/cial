@@ -9,8 +9,7 @@ def determine_search_string(logo: Tag) -> str:
     if logo.has_attr('alt'):
         search += logo.get('alt', '').lower()
     if logo.has_attr('class'):
-        classes = [x.lower() for x in logo.get('class', '')]
-        search += ''.join(classes)
+        search += ''.join([x.lower() for x in logo.get('class', '')])
     return search
 
 
@@ -20,13 +19,14 @@ class LogoHandler:
         self.soup = soup
         self.url = url
         self.base_url = base_url
+        self.found_logo = False
 
     def run(self) -> str:
         logos = self.soup.find_all(['header', 'img'])
         if logos:
             return self.__treat(logos)
 
-    def __treat(self, logos) -> str:
+    def __treat(self, logos: [Tag]) -> str:
         result = []
         for logo in logos:
             if not logo.has_attr('src'):
@@ -36,6 +36,7 @@ class LogoHandler:
                 result.append(self.__treat_path(logo['src']))
 
         if len(result) > 0 and result[0]:
+            self.found_logo = True
             return result[0]
         return ""
 
@@ -49,4 +50,5 @@ class LogoHandler:
                 path = f'{self.base_url}/{path}'
         return path
 
-
+    def is_logo_found(self):
+        return self.found_logo

@@ -22,6 +22,12 @@ class TestScrapper(unittest.TestCase):
         except RequestException:
             raise RequestException
 
+    def test_successful_run(self):
+        pass
+
+    def test_unsuccessful_run(self):
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()
