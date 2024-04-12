@@ -1,6 +1,7 @@
 import logging
 from threading import Thread
 
+
 class Logger:
 
     def __init__(self,log_file):
