@@ -1,12 +1,12 @@
 import time
 import unittest
 import requests
+import validators
 import tests.cases
 from utils import UrlHandler
 from bs4 import BeautifulSoup
 from scrapper import Scrapper
 from logger import LoggerHandler
-import validators
 from requests.exceptions import RequestException
 from scrapper.handlers import LogoHandler, PhoneHandler
 
