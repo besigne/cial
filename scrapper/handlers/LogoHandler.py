@@ -1,28 +1,28 @@
 from bs4 import BeautifulSoup
 from bs4.element import Tag
+from utils import UrlHandler
+from utils import logo_required_tags, possible_logo_tags
 
 
 def determine_search_string(logo: Tag) -> str:
     search = ''
-    if logo.has_attr('src'):
-        search += logo.get('src', '').lower()
-    if logo.has_attr('alt'):
-        search += logo.get('alt', '').lower()
-    if logo.has_attr('class'):
-        search += ''.join([x.lower() for x in logo.get('class', '')])
+    for tag in logo_required_tags:
+        if logo.has_attr(tag):
+            if tag == 'class':
+                search += ''.join([x.lower() for x in logo.get('class', '')])
+            search += str(logo.get(tag, '')).lower()
     return search
 
 
 class LogoHandler:
 
-    def __init__(self, soup: BeautifulSoup, url: str, base_url: str):
+    def __init__(self, soup: BeautifulSoup, url_handler: UrlHandler):
+        self.url_handler = url_handler
         self.soup = soup
-        self.url = url
-        self.base_url = base_url
-        self.found_logo = False
+        self.path_to_logo = ""
 
     def run(self) -> str:
-        logos = self.soup.find_all(['header', 'img'])
+        logos = self.soup.find_all(possible_logo_tags)
         if logos:
             return self.__treat(logos)
 
@@ -36,7 +36,7 @@ class LogoHandler:
                 result.append(self.__treat_path(logo['src']))
 
         if len(result) > 0 and result[0]:
-            self.found_logo = True
+            self.path_to_logo = result[0]
             return result[0]
         return ""
 
@@ -45,10 +45,10 @@ class LogoHandler:
             if path.startswith('//'):
                 path = f'https:{path}'
             elif path.startswith('/'):
-                path = f'{self.base_url}{path}'
+                path = f'{self.url_handler.base_url()}{path}'
             else:
-                path = f'{self.base_url}/{path}'
+                path = f'{self.url_handler.base_url()}/{path}'
         return path
 
-    def is_logo_found(self):
-        return self.found_logo
+    def logo_url(self) -> str:
+        return self.path_to_logo

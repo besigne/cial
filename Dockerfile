@@ -13,4 +13,4 @@ RUN \
 
 COPY . .
 
-ENTRYPOINT ["python", "-u", "-m", "module"]
+CMD ["python", "-u", "-m", "module"]

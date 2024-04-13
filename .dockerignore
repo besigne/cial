@@ -26,3 +26,4 @@ share/python-wheels/
 *.egg
 MANIFEST
 log
+tests/tests_log

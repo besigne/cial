@@ -1,44 +1,40 @@
-import re
 import phonenumbers
 from bs4 import BeautifulSoup
-
-regions = {
-    "US": r'^\+(\d)(\d{3})(\d{3})(\d{4})$',
-    "BR": r'^\+(\d{2})(\d{2})(\d{4})(\d{4})$'
-}
+from utils.tags import possible_phone_tags
 
 
-def format_phone_number(phone_number: str, regex: str) -> str:
-    match = re.match(f'{regex}', phone_number)
-    if match:
-        country_code = match.group(1)
-        area_code = match.group(2)
-        first_part = match.group(3)
-        second_part = match.group(4)
-        return f'+{country_code} ({area_code}) {first_part} {second_part}'
-    else:
-        return ""
+def add_parenthesis_to_phone(phone_number: str) -> str:
+    phone_pieces = phone_number.split(' ')
+    phone_pieces[1] = f"({phone_pieces[1]})"
+    return ' '.join(phone_pieces)
 
 
 class PhoneHandler:
 
-    def __init__(self, soup: BeautifulSoup):
+    def __init__(self, soup: BeautifulSoup, country_code: str):
         self.soup = soup
+        self.country_code = country_code
         self.phones_count = 0
 
     def run(self) -> list:
         phones = []
-        possible_phones = str(self.soup)
-
-        for region, regex in regions.items():
-            for match in phonenumbers.PhoneNumberMatcher(possible_phones, region):
-                not_valid_phone_yet = phonenumbers.format_number(match.number, phonenumbers.PhoneNumberFormat.E164)
-                validated = format_phone_number(not_valid_phone_yet, regex)
-                if validated != "":
-                    self.phones_count += 1
-                    phones.append(validated)
+        numbers = phonenumbers.PhoneNumberMatcher(self.__watering_soup(), self.country_code)
+        for unvalidated_number in numbers:
+            formated_number = phonenumbers.format_number(
+                unvalidated_number.number, phonenumbers.PhoneNumberFormat.INTERNATIONAL).replace('-', ' ')
+            if phonenumbers.is_possible_number(
+                    phonenumbers.parse(formated_number, self.country_code)) and formated_number not in phones:
+                phones.append(formated_number)
+                self.phones_count += 1
 
         return phones
 
     def how_many_phones(self) -> int:
         return self.phones_count
+
+    def __watering_soup(self) -> str:
+        search = ''
+        [data.extract() for data in self.soup(['script', 'style'])]
+        tags = self.soup.find_all(possible_phone_tags)
+        search += ''.join(str(tag.get_text()) for tag in tags)
+        return search
