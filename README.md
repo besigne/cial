@@ -20,7 +20,7 @@ cat websites.txt | docker run -i module
 ----------
 
 ## Tests
-To run tests you will need to be inside the `venv`, verify if you're inside project's root folder. Also, your global python version should be the [Python 3.12.2](https://www.python.org/downloads/release/python-3122/).
+To run tests you will need to be inside the `venv`, verify if you're inside project's root folder. Also, your global python version should be [Python 3.12.2](https://www.python.org/downloads/release/python-3122/).
 ```bash
 python -m venv venv
 ```
@@ -44,8 +44,7 @@ All tests are run on same URL: `https://www.cmsenergy.com/contact-us/default.asp
 -------
 ## Information
 I have provided a **websites.txt** file that I used for tests containing **25 valid urls**, any txt file with formatted urls can be used.
-Also **I took the liberty to not include the parentheses back into phone numbers** because the updated worldwide rule is that the parentheses
-are **not** needed anymore, that is because the area codes stopped being optional.
+These are some rules
 
 - urls malformed will not be processed.
 - if `status_code` is not `request.codes.ok` it returns `Dead Page` on terminal.
@@ -59,9 +58,19 @@ are **not** needed anymore, that is because the area codes stopped being optiona
   - Status Code
   - Logo URL if found
   - A phone number count
+- There are two different `logs`:
+  - **log**: Located on root folder, this contains the application log.
+  - **tests.tests_log**: Located inside `tests Package`, this contains only the test log, it has the same format from the other log, but only displays tests information.
+
+Testing with this testing file shows an average of `5 URLs` scrapped per **second**, this average is variable depending on various factors, these being the most important:
+- Where the website is hosted.
+- Server response time.
+- Size of page's content.
 
 ## Limitations
-
+Due to striving to get all phone numbers in every part of the world my idea was, get the URLs `country_code` from it's `IP address`
+and format the phone number based on that, this is the most successful case I found while trying different methods, but it still presents errors sometimes when a website
+has automatic redirection to a closer host enabled.
 
 ## Possible Expansions
 - .svg logos can be saved to a local file with a shared folder between the container and host if they don't have a valid url.
