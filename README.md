@@ -32,7 +32,7 @@ This `websites.txt` is a pre-built file for testing
 cat websites.txt | docker run -i module
 ```
 ### Setup Locally
-To tun locally you will need to follow these steps, I assume you're inside the project's root folder.
+To run locally you will need to follow these steps, I assume you're inside the project's root folder.
 #### Create virtual env or `venv`:
 ```bash
 python -m venv venv
