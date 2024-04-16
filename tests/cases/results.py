@@ -8,5 +8,4 @@ results_url_handler = {
 
 result_logo_handler = "https://s26.q4cdn.com/888045447/files/design/ClientLogo.png"
 
-result_phone_handler = ['+1 (517) 788 0550', '+1 (517) 768 3376', '+1 (517) 788 2395', '+1 (517) 788 2394',
-                        '+1 (350) 412 2404']
+result_phone_handler = ['+1 (517) 788 0550', '+1 (517) 768 3376', '+1 (517) 788 2395', '+1 (517) 788 2394']

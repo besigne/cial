@@ -19,6 +19,8 @@ class TestScrapper(unittest.TestCase):
                                       'Chrome/58.0.3029.110 Safari/537.3'
                         }
         self.url = "https://www.cmsenergy.com/contact-us/default.aspx"
+        with open('tests/cases/mock.html', 'rb') as mock:
+            self.page_content = mock.read()
 
     def test_urls_validation(self):
         try:
@@ -39,15 +41,14 @@ class TestScrapper(unittest.TestCase):
 
     def test_logo_handler(self):
         url_handler = UrlHandler(self.url)
-        page = requests.get(self.url, headers=self.headers)
-        logo_handler = LogoHandler(BeautifulSoup(page.content, 'html.parser'), url_handler)
+        logo_handler = LogoHandler(BeautifulSoup(self.page_content, 'html.parser'), url_handler)
         logo = logo_handler.run()
         self.assertEqual(logo, tests.cases.result_logo_handler)
 
     def test_phone_handler(self):
         url_handler = UrlHandler(self.url)
         page = requests.get(self.url, headers=self.headers)
-        phone_handler = PhoneHandler(BeautifulSoup(page.content, 'html.parser'),
+        phone_handler = PhoneHandler(BeautifulSoup(self.page_content, 'html.parser'),
                                      url_handler.find_country_code_from_url())
         phones = phone_handler.run()
         self.assertEqual(phones, tests.cases.result_phone_handler)
